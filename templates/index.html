@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>批量图片处理</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-brand">
+    <span class="safelight" aria-hidden="true"></span>
+    <span class="bar-name">批量图片处理</span>
+  </div>
+  <div class="bar-actions">
+    <span class="bar-count" id="count">还没有选择图片</span>
+    <label class="btn btn-quiet">
+      选择图片
+      <input type="file" id="file-input" accept="image/*" multiple hidden>
+    </label>
+    <button class="btn btn-primary" id="btn-export" disabled>导出全部</button>
+  </div>
+</header>
+
+<main class="workbench">
+
+  <aside class="filmstrip" id="filmstrip" aria-label="图片列表">
+    <p class="filmstrip-hint" id="filmstrip-hint">
+      选择图片后，这里会显示裁剪框在每张图上的落点。
+    </p>
+  </aside>
+
+  <section class="stage" id="stage">
+    <div class="stage-canvas" id="stage-canvas" hidden>
+      <canvas id="canvas"></canvas>
+      <div class="crop-layer" id="crop-layer">
+        <div class="crop-box" id="crop-box">
+          <span class="grid" aria-hidden="true"></span>
+          <i data-handle="nw"></i><i data-handle="n"></i><i data-handle="ne"></i>
+          <i data-handle="e"></i><i data-handle="se"></i><i data-handle="s"></i>
+          <i data-handle="sw"></i><i data-handle="w"></i>
+        </div>
+      </div>
+    </div>
+    <div class="stage-hint" id="stage-hint">
+      <p class="hint-title">把图片拖到这里</p>
+      <p class="hint-text">
+        也可以点击右上角的「选择图片」。在图片上拖动可以重新框选裁剪范围。
+        定好第一张之后，用「应用到全部图片」把同样的范围套给其余图片。
+      </p>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="panel-scroll">
+
+      <section class="group">
+        <h2 class="group-title">裁剪比例</h2>
+        <div class="chips" id="ratios">
+          <button class="chip is-active" data-ratio="free">自由</button>
+          <button class="chip" data-ratio="1:1">1:1</button>
+          <button class="chip" data-ratio="4:3">4:3</button>
+          <button class="chip" data-ratio="3:4">3:4</button>
+          <button class="chip" data-ratio="16:9">16:9</button>
+          <button class="chip" data-ratio="9:16">9:16</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title">变换</h2>
+        <div class="grid-2">
+          <button class="btn btn-quiet" id="btn-rot-ccw">向左转 90°</button>
+          <button class="btn btn-quiet" id="btn-rot-cw">向右转 90°</button>
+          <button class="btn btn-quiet" id="btn-flip-h">水平翻转</button>
+          <button class="btn btn-quiet" id="btn-flip-v">垂直翻转</button>
+        </div>
+        <dl class="readout">
+          <div><dt>裁剪范围</dt><dd id="readout-crop">—</dd></div>
+          <div><dt>输出尺寸</dt><dd id="readout-size">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title">应用范围</h2>
+        <p class="group-note" id="scope-note">改动只作用于当前这张图。</p>
+        <div class="stack">
+          <button class="btn btn-quiet" id="btn-apply-all">应用到全部图片</button>
+          <button class="btn btn-quiet" id="btn-reset-one">重置当前图片</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group-title">导出设置</h2>
+
+        <label class="field">
+          <span>格式</span>
+          <select id="out-format">
+            <option value="jpg">JPG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WEBP</option>
+          </select>
+        </label>
+
+        <label class="field" id="field-quality">
+          <span>质量 <b id="quality-value">92</b></span>
+          <input type="range" id="out-quality" min="1" max="100" value="92">
+        </label>
+
+        <label class="field">
+          <span>缩放</span>
+          <select id="out-resize-mode">
+            <option value="original">保持裁剪后尺寸</option>
+            <option value="long_edge">长边限制</option>
+            <option value="exact">固定宽高</option>
+          </select>
+        </label>
+
+        <label class="field" id="field-long-edge" hidden>
+          <span>长边像素</span>
+          <input type="number" id="out-long-edge" min="16" max="20000" value="1600">
+        </label>
+
+        <div class="field-pair" id="field-exact" hidden>
+          <label class="field"><span>宽</span><input type="number" id="out-width" min="1" max="20000" value="1080"></label>
+          <label class="field"><span>高</span><input type="number" id="out-height" min="1" max="20000" value="1080"></label>
+        </div>
+      </section>
+
+      <div class="status" id="status" hidden></div>
+
+    </div>
+  </aside>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
