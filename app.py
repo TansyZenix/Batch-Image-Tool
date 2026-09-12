@@ -1,7 +1,7 @@
 """批量图片处理工具 —— Flask 后端。
 
 启动：
-    conda activate pytorchEnv
+    pip install -r requirements.txt
     python app.py
 
 然后浏览器打开 http://127.0.0.1:5000
